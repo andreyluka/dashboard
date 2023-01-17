@@ -1,10 +1,4 @@
 <script>
-// defineProps({
-//   msg: {
-//     type: String,
-//     required: true
-//   }
-// })
 </script>
 
 <template>
@@ -16,7 +10,7 @@
       <button type="button" class="header__btn header__btn-vertical"></button>
       <button type="button" class="header__btn header__btn-horizontal active"></button>
       <button type="button" class="header__btn header__btn-grid"></button>
-      <input class="header__search" type="text" name="search" id="search">
+      <input type="text" class="header__search" name="search" id="search">
       <button type="button" class="header__btn header__btn-filter applied"></button>
       <button type="button" class="header__btn header__btn-sorter applied"></button>
     </div>
@@ -45,18 +39,29 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @include phones {
+    width: rem(50);
+    height: rem(50);
+  }
 }
 
 .header__controls {
   display: flex;
   align-items: center;
+
+  @include phones {
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    flex: 1;
+  }
 }
 
 .header__btn {
   width: rem(36);
   height: rem(36);
   position: relative;
-  margin-right: 10px;
+  margin-right: rem(10);
   border: 2px solid $color-background;
   transition: .4s;
   
@@ -118,7 +123,6 @@
       height:rem(22);
     }
   }
-
 }
   
 .active {
@@ -150,12 +154,18 @@
   box-shadow: 0px 6px 5px 0px rgba(34, 60, 80, 0.32);
   outline: none;
   padding: 0 0.4em;
-  margin: 0 45px 0 35px;
+  margin: 0 2.8vw 0 2.2vw;
   position: relative;
   
   &:focus {
     box-shadow: 0px 2px 1px 0px rgba(34, 60, 80, 0.32);
     top: 3px;
+  }
+  
+  @include phones {
+    width: 100%;
+    margin: 15px 3vw 0 3vw;
+    order: 6;
   }
 }
 
@@ -171,7 +181,7 @@
     box-shadow: 2px 3px 2px 0px rgba(34, 60, 80, 0.32);
     bottom: 2px;
   }
-  
+
   &:active {
     box-shadow: none;
     bottom: 0px;

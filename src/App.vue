@@ -1,27 +1,53 @@
-<script setup>
-import appHeader from './components/appHeader.vue'
-import appCard from './components/appCard.vue'
+<script>
+import appHeader from './components/appHeader.vue';
+import appCard from './components/appCard.vue';
+
+export default {
+  components: {
+    appHeader,
+    appCard
+  },
+  data() {
+    return {
+      people: [],
+      requestURL: 'https://interview-api-luvkm7etwa-uc.a.run.app/people',
+      preloader: false
+    }
+  },
+  methods: {
+    async sendRequeste(url, perPage, page) {
+      try {
+        const urlWithParameters = url + '?pp=' + perPage + '&p=' + page;
+        this.preloader = true;
+        
+        const response = await fetch(urlWithParameters);
+        this.people = await response.json();
+        
+        this.preloader = false;
+      } catch (error) {
+        alert(error);
+      }
+    }
+  },
+  created() {
+    this.sendRequeste(this.requestURL);
+  }
+}
 </script>
 
 <template>
   <div class="wrapper">
     <appHeader/>
+    <div v-if="preloader" class="preloader">
+      <div class="preloader__spinner"></div>
+    </div>
     <div class="container">
       <ul class="persons">
-        <li class="persons__item">
-          <appCard/>
-        </li>
-        <li class="persons__item">
-          <appCard/>
-        </li>
-        <li class="persons__item">
-          <appCard/>
-        </li>
-        <li class="persons__item">
-          <appCard/>
-        </li>
-        <li class="persons__item">
-          <appCard/>
+        <li class="persons__item"
+          v-for="person in people"
+          :key="person.Id"
+        >
+          <appCard :person="person"/>
         </li>
         <li class="persons__item persons__item-button">
           <button type="button" class="persons__button"></button>
@@ -32,6 +58,48 @@ import appCard from './components/appCard.vue'
 </template>
 
 <style scoped lang="scss">
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba($color-black, .2);
+  z-index: 20;
+}
+
+.preloader__spinner {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  &:after {
+    content: "⠋";
+    display: block;
+    font-size: 80px;
+    color: brown;
+    animation: changeContent .8s linear infinite;
+  }
+}
+
+@keyframes changeContent {
+  10% { content: "⠙"; }
+  20% { content: "⠹"; }
+  30% { content: "⠸"; }
+  40% { content: "⠼"; }
+  50% { content: "⠴"; }
+  60% { content: "⠦"; }
+  70% { content: "⠧"; }
+  80% { content: "⠇"; }
+  90% { content: "⠏"; }
+}
+
+
 .container {
   max-width: 1400px;
   margin: rem(80) auto;
@@ -50,7 +118,6 @@ import appCard from './components/appCard.vue'
   
   @include tablets {
     grid-template-columns: 1fr 1fr;
-    grid-gap: 2.5vw 2.5%;
   }
   
   @include phones {
@@ -60,8 +127,15 @@ import appCard from './components/appCard.vue'
 }
 
 .persons__item {
+  width: 100%;
   max-width: 350px;
   margin: 0 auto;
+  border-radius: rem(14);
+  transition: 0.5s;
+  
+  &:hover {
+    box-shadow: 4.1px 2.9px 20px 0 rgba(0, 0, 0, 0.25);
+  }
 }
 
 .persons__item-button {

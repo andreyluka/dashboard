@@ -1,6 +1,9 @@
 <script>
 export default {
   name: 'appCard',
+  props: {
+    person: Object
+  }
 }
 </script>
 
@@ -8,17 +11,17 @@ export default {
   <div class="card">
     <div class="card__person">
       <div class="card__photo">
-        <img src="@/assets/images/vale.jpg" alt="person's photo" class="card__img">
+        <img :src="person.Photo" alt="person's photo" class="card__img">
       </div>
       <div class="card__container">
-        <h2 class="card__name">Irina Maslikova</h2>
-        <h3 class="card__occupation">Sr Full-stack engineer</h3>
+        <h2 class="card__name">{{ person.Name }}</h2>
+        <h3 class="card__occupation">{{ person.Title }}</h3>
         <ul class="card__tags">
-          <li class="card__tag">VueJS</li>
-          <li class="card__tag">Golang</li>
-          <li class="card__tag">Firebase</li>
-          <li class="card__tag">SQL</li>
-          <li class="card__tag">ReactJS</li>
+          <li class="card__tag"
+            v-for="(tag, i) in person.Tags"
+            :key="i"
+            :style="{backgroundColor: `#${tag.Color}`}"
+          >{{ tag.Name }}</li>
         </ul>
       </div>
     </div>
@@ -27,10 +30,15 @@ export default {
         <div class="card__index card__profit">
           <div class="card__index-sign">
             <div class="card__index-name">Profit</div>
-            <div class="card__index-count">+ $257</div>
+            <div class="card__index-count">+ ${{ person.Profit[0].Amount }}</div>
           </div>
           <div class="card__index-graph">
-            <div class="card__index-filling"></div>
+            <div class="card__index-filling"
+              :style="{
+                backgroundColor: `#${person.Profit[0].Color}`, 
+                width: (person.Profit[0].Amount/10)+'%'
+              }"
+            ></div>
           </div>
         </div>
         <div class="card__index card__attention">
@@ -38,10 +46,17 @@ export default {
             <div class="card__index-name">Attention</div>
             <div class="card__index-count">48 h</div>
           </div>
-          <div class="card__index-graph">
-            <div class="card__index-filling card__index-filling-2"></div>
-            <div class="card__index-filling card__index-filling-1"></div>
-          </div>
+          <ul class="card__index-graph">
+            <li 
+              class="card__index-filling"
+              v-for="fill in person.Attention"
+              :key="fill.color"
+              :style="{
+                backgroundColor: `#${fill.Color}`, 
+                width: fill.Amount + '%'
+              }"
+            ></li>
+          </ul>
         </div>
         <div class="card__diagram">
           <ul class="card__rates">
@@ -104,6 +119,12 @@ export default {
   margin-bottom: rem(5);
 }
 
+.card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .card__name {
   font-weight: bolder;
 }
@@ -116,7 +137,8 @@ export default {
 .card__tags {
   position: absolute;
   top: 10px;
-  right: -13%;
+  right: 0;
+  transform: translateX(50%);
   color: white;
 }
 
@@ -130,26 +152,6 @@ export default {
 
   &:hover {
     transform: translateX(-50%);
-  }
-
-  &:nth-child(1) {
-    background-color: $color-orange-dark;
-  }
-
-  &:nth-child(2) {
-    background-color: $color-green-dark;
-  }
-
-  &:nth-child(3) {
-    background-color: $color-yellow-dark;
-  }
-
-  &:nth-child(4) {
-    background-color: $color-purple-dark;
-  }
-
-  &:nth-child(5) {
-    background-color: $color-blue-dark;
   }
 }
 
@@ -169,44 +171,33 @@ export default {
 
 .card__index-graph {
   height: rem(16);
+  background-color: $color-gray-light;
   border-radius: 6px;
-  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  overflow: hidden;
 }
 
 .card__index-filling {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
   border-radius: 6px;
-}
+  position: relative;
+  animation: load .8s cubic-bezier(.81,.71,.82,1.56);
 
-.card__profit {
-  .card__index-graph {
-    background-color: $color-gray-light;
-  }
-  .card__index-filling {
-    width: 45%;
-    background-color: $color-green-dark;
+  &::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: rem(16);
+    position: absolute;
+    top: 0;
+    left: -5px;
+    background-color: inherit;
   }
 }
 
 .card__attention {
   margin-bottom: rem(22);
-
-  .card__index-graph {
-    background-color: $color-attention-yellow;
-
-    .card__index-filling-2 {
-      width: 69%;
-      background-color: $color-attention-purple;
-    }
-    .card__index-filling-1 {
-      width: 33%;
-      background-color: $color-attention-pink;
-    }
-  }
 }
 
 .card__rates {
@@ -227,6 +218,7 @@ export default {
     top: 0;
     height: 100%;
     border-radius: 8px;
+    animation: load .8s cubic-bezier(.81,.71,.82,1.56);
   }
   
   &:nth-child(1) {
@@ -270,5 +262,10 @@ export default {
   font-weight: 500;
   z-index: 10;
   width: 100%;
+}
+
+@keyframes load {
+  0% { width: 0; }
+  100% { width: var(('person.Profit[0].Amount'/10)+'%'); }
 }
 </style>

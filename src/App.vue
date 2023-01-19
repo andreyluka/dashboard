@@ -136,6 +136,12 @@ export default {
   &:hover {
     box-shadow: 4.1px 2.9px 20px 0 rgba(0, 0, 0, 0.25);
   }
+  
+  &:last-child {
+    &:hover {
+      box-shadow: none;
+    }
+  }
 }
 
 .persons__item-button {
